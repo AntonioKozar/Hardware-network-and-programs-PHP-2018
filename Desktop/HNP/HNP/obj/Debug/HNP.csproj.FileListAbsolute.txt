@@ -1,0 +1,7 @@
+C:\wamp64\www\Hardware-network-and-programs-PHP-2018\Desktop\HNP\HNP\bin\Debug\HNP.exe.config
+C:\wamp64\www\Hardware-network-and-programs-PHP-2018\Desktop\HNP\HNP\bin\Debug\HNP.exe
+C:\wamp64\www\Hardware-network-and-programs-PHP-2018\Desktop\HNP\HNP\bin\Debug\HNP.pdb
+C:\wamp64\www\Hardware-network-and-programs-PHP-2018\Desktop\HNP\HNP\obj\Debug\HNP.csprojAssemblyReference.cache
+C:\wamp64\www\Hardware-network-and-programs-PHP-2018\Desktop\HNP\HNP\obj\Debug\HNP.csproj.CoreCompileInputs.cache
+C:\wamp64\www\Hardware-network-and-programs-PHP-2018\Desktop\HNP\HNP\obj\Debug\HNP.exe
+C:\wamp64\www\Hardware-network-and-programs-PHP-2018\Desktop\HNP\HNP\obj\Debug\HNP.pdb

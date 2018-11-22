@@ -6,6 +6,7 @@ $HTMLBodyInformation = new HTMLBodyInformation;
 if(isset($_POST['Location'])){$HTMLBodyInformation->location = $_POST['Location'];}else{$HTMLBodyInformation->location = 1;}
 if(isset($_POST['Details'])){$HTMLBodyInformation->details = $_POST['Details'];}else{$HTMLBodyInformation->details = 1;}
 $HTMLBodyInformation = ConstructorHome($HTMLBodyInformation->location, $HTMLBodyInformation->details);
+
 ?>
 <!doctype html>
 <html lang="en">

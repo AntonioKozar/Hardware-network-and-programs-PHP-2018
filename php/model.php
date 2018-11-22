@@ -14,6 +14,39 @@ class DatabaseInformation{
     }
 }
 
+class DataModel{
+    public $Name;
+    public $Barcode;
+    public $MAC;
+    public $IPv4;
+    public $Subnet;
+    public $Gateway;
+    public $DNS;
+    public $DNS1;
+    public $DNS2;
+    public $Processor;
+    public $RAM;
+    public $MOBO;
+    public $HDDNumb;
+    public $HDDSize;
+    public $GPU;
+    public $OS;
+    public $Location;
+    public $FD;
+    public $Port;
+    public $Programs;
+}
+class DataUpload{
+    public function DesktopPC($DataModel)
+    {
+        $DatabaseInformation = new DatabaseInformation;
+        $MySQLiQuerys = new MySQLiQuerys;
+        $Connection = $DatabaseInformation->DatabaseConnection();
+        $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel));
+    }
+}
+
+
 class MySQLiQuerys{
     public $TableBodyHome = 'SELECT barcode, ipv4, mac, name, os FROM pc ORDER BY barcode;';
     public $TableBodyNetwork = 'SELECT ip, mac FROM network ORDER BY ip;';
@@ -22,6 +55,31 @@ class MySQLiQuerys{
         $Result = "SELECT * FROM pc WHERE mac='{$var}';";
         return $Result;
     } 
+    public function UploadPC($DataModel)
+    {
+        $Result = "INSERT INTO pc 
+        (name, barcode, mac, ipv4, subnet, gateway, dns1, dns2, processor, ram, motherboard, hddnumber, hddsize, gpu, os, locations, added_date, edited_date) VALUES 
+        ('{$DataModel->Name}', 
+        '{$DataModel->Barcode}', 
+        '{$DataModel->MAC}', 
+        '{$DataModel->IPv4}', 
+        '{$DataModel->Subnet}', 
+        '{$DataModel->Gateway}', 
+        '{$DataModel->DNS1}', 
+        '{$DataModel->DNS2}', 
+        '{$DataModel->Processor}', 
+        '{$DataModel->RAM}', 
+        '{$DataModel->MOBO}', 
+        '{$DataModel->HDDNumb}', 
+        '{$DataModel->HDDSize}', 
+        '{$DataModel->GPU}', 
+        '{$DataModel->OS}', 
+        '{$DataModel->Location}', 
+        CURRENT_TIMESTAMP, 
+        CURRENT_TIMESTAMP);";
+
+        return $Result;
+    }
 }
 
 class HTMLHeaderInformation{
