@@ -42,7 +42,8 @@ class DataUpload{
         $DatabaseInformation = new DatabaseInformation;
         $MySQLiQuerys = new MySQLiQuerys;
         $Connection = $DatabaseInformation->DatabaseConnection();
-        $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel));
+        $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel)) or die('Error: ' . mysqli_errno($Connection));
+        return $Result;
     }
 }
 

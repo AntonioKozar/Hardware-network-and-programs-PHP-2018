@@ -23,8 +23,9 @@ if(isset($_POST['UploadData']) and $_POST['UploadData'] == 1 ){
     $DataModel->Location = $_POST['Location'];
     $DataModel->FD = $_POST['FD'];
     $DataModel->Port = $_POST['Port'];
-    $DataUpload->DesktopPC($DataModel);
-
+    
+    $Result = $DataUpload->DesktopPC($DataModel);
+    print($Result);
 }
 
 
