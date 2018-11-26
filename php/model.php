@@ -42,7 +42,15 @@ class DataUpload{
         $DatabaseInformation = new DatabaseInformation;
         $MySQLiQuerys = new MySQLiQuerys;
         $Connection = $DatabaseInformation->DatabaseConnection();
-        $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel)) or die('Error: ' . mysqli_errno($Connection));
+        $Result = $Connection->query($MySQLiQuerys->SelectPC($DataModel->MAC)) or die('Error: ' . mysqli_errno($Connection));
+        if ($Result->num_rows == 0) {
+            $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel)) or die('Error: ' . mysqli_errno($Connection));
+        }
+        else{
+            $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel)) or die('Error: ' . mysqli_errno($Connection));
+        }
+
+        
         return $Result;
     }
 }
@@ -51,13 +59,11 @@ class DataUpload{
 class MySQLiQuerys{
     public $TableBodyHome = 'SELECT barcode, ipv4, mac, name, os FROM pc ORDER BY barcode;';
     public $TableBodyNetwork = 'SELECT ip, mac FROM network ORDER BY ip;';
-    public function DetailsPC($var)
-    {
+    public function DetailsPC($var){
         $Result = "SELECT * FROM pc WHERE mac='{$var}';";
         return $Result;
     } 
-    public function UploadPC($DataModel)
-    {
+    public function UploadPC($DataModel){
         $Result = "INSERT INTO pc 
         (name, barcode, mac, ipv4, subnet, gateway, dns1, dns2, processor, ram, motherboard, hddnumber, hddsize, gpu, os, locations, added_date, edited_date) VALUES 
         ('{$DataModel->Name}', 
@@ -81,6 +87,30 @@ class MySQLiQuerys{
 
         return $Result;
     }
+    public function EditPC($DataModel)
+    {
+        $Result = "UPDATE pc SET name='{$Country->name}' 
+        name='{$DataModel->Name}', 
+        barcode='{$DataModel->Barcode}', 
+        ipv4='{$DataModel->IPv4}', 
+        subnet='{$DataModel->Subnet}', 
+        gateway='{$DataModel->Gateway}', 
+        dns1='{$DataModel->DNS1}', 
+        dns2='{$DataModel->DNS2}', 
+        processor='{$DataModel->Processor}', 
+        ram='{$DataModel->RAM}', 
+        motherboard='{$DataModel->MOBO}', 
+        hddnumber='{$DataModel->HDDNumb}', 
+        hddsize='{$DataModel->HDDSize}', 
+        gpu='{$DataModel->GPU}', 
+        os='{$DataModel->OS}', 
+        locations='{$DataModel->Location}'
+        WHERE mac='{$DataModel->MAC}';";
+    }
+
+    public function SelectPC($var){
+        return $Result = "SELECT * FROM pc WHERE mac='{$var}';";
+    }
 }
 
 class HTMLHeaderInformation{
@@ -98,8 +128,7 @@ class HTMLBodyInformation{
     public $details;
 }
 class Details{
-    public function PC($mac)
-    {
+    public function PC($mac){
         $DatabaseInformation = new DatabaseInformation;
         $MySQLiQuerys = new MySQLiQuerys;
         $TH = array("ID: ", "Name: ", "Barcode: ", "MAC: ", "IPv4: ", "Subnet mask: ", "Gateway: ", "Primary DNS: ", "Secundary DNS: ", "Processor: ", "RAM: ", "Motherboard: ", "HDD number: ", "HDD size: ", "GPU: ", "OS", "Location: ", "First registration date:", "Last update date: " );
@@ -316,6 +345,48 @@ class Navbar{
                 <form method="POST">
                 <input type="hidden" name="Location" value="5">  
                     <button class="btn btn-secondary" type="submit">Hardware</button>
+                </form>
+                </li>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0">
+                <input disabled class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button disabled class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>';
+        return $var;
+    }
+    public function Detail(){
+        $var = '
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="1">  
+                    <button class="btn btn-outline-secondary" type="submit">Home</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                    <input type="hidden" name="Location" value="2">  
+                    <button class="btn btn-outline-secondary" type="submit">PC list</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="3">  
+                    <button class="btn btn-outline-secondary" type="submit">Network</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="4">  
+                    <button class="btn btn-outline-secondary" type="submit">Programs</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="5">  
+                    <button class="btn btn-outline-secondary" type="submit">Hardware</button>
                 </form>
                 </li>
             </ul>

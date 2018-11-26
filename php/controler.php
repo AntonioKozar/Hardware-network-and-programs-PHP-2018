@@ -59,7 +59,6 @@ function ConstructorHome($Location, $mac)
             # Table body
                 $HTMLBodyInformation->tablebody = $TableBody->Hardware();
                 break;
-            
             default:
                 $HTMLBodyInformation->location = header("Location: index.php");
                 break;
@@ -68,8 +67,10 @@ function ConstructorHome($Location, $mac)
     else {
         # Details
         $HTMLBodyInformation->tablebody = $Details->PC($mac);
+        # Site Location
         $HTMLBodyInformation->location = "Details for: " . $mac;
-        
+        # Navbar
+        $HTMLBodyInformation->headernav = $Navbar->Detail();
     }
     return $HTMLBodyInformation;
 }
