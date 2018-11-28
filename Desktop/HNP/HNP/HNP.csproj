@@ -47,6 +47,7 @@
     <Compile Include="Controler.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressBar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

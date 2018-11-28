@@ -103,7 +103,7 @@ namespace HNP
                 RegistryKey SubKey = registryKey.OpenSubKey(SubKeyName);
                 if(SubKey.GetValue("DisplayName") != null & SubKey.GetValue("Publisher") != null)
                 {
-                    Result.Add(SubKey.GetValue("Publisher").ToString() + " >>> " + SubKey.GetValue("DisplayName").ToString());
+                    Result.Add(SubKey.GetValue("Publisher").ToString() + " - " + SubKey.GetValue("DisplayName").ToString());
                 }
                 
             }
@@ -174,7 +174,7 @@ namespace HNP
             WebClient Client = new WebClient();
             NameValueCollection Values = new NameValueCollection();
             HNPLocations URL = new HNPLocations();
-            Values.Add("UploadData", "1");
+            Values.Add("UploadType", "1");
             Values.Add("Name", DataModel.Name);
             Values.Add("Barcode", DataModel.Barcode);
             Values.Add("MAC", DataModel.MAC);
@@ -192,7 +192,19 @@ namespace HNP
             Values.Add("Location", DataModel.Location);
             Values.Add("FD", DataModel.FD);
             Values.Add("Port", DataModel.Port);
+            //Values.Add("Programs", DataModel.Programs.ToString());
 
+            byte[] responseArray = Client.UploadValues(URL.Upload, Values);
+            return responseArray;
+        }
+        public byte[] SendDataPOSTPrograms(ModelPrograms DataModel)
+        {
+            WebClient Client = new WebClient();
+            NameValueCollection Values = new NameValueCollection();
+            HNPLocations URL = new HNPLocations();
+            Values.Add("UploadType", "2");
+            Values.Add("MAC", DataModel.MAC);
+            Values.Add("Programs", DataModel.Program);
             byte[] responseArray = Client.UploadValues(URL.Upload, Values);
             return responseArray;
         }

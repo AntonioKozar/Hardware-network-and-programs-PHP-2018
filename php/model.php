@@ -42,15 +42,27 @@ class DataUpload{
         $DatabaseInformation = new DatabaseInformation;
         $MySQLiQuerys = new MySQLiQuerys;
         $Connection = $DatabaseInformation->DatabaseConnection();
-        $Result = $Connection->query($MySQLiQuerys->SelectPC($DataModel->MAC)) or die('Error: ' . mysqli_errno($Connection));
-        if ($Result->num_rows == 0) {
-            $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel)) or die('Error: ' . mysqli_errno($Connection));
+        $Result = "DesktopPC";
+        if (!$Connection->query($MySQLiQuerys->UploadPC($DataModel))) {
+            $Connection->query($MySQLiQuerys->DeletePC($DataModel->MAC));
+            $Connection->query($MySQLiQuerys->UploadPC($DataModel));
         }
-        else{
-            $Result = $Connection->query($MySQLiQuerys->UploadPC($DataModel)) or die('Error: ' . mysqli_errno($Connection));
-        }
-
         
+        
+        
+        if(!$Connection->query($MySQLiQuerys->CreatePrograms($DataModel->MAC))){
+            $Connection->query($MySQLiQuerys->DeletePrograms($DataModel->MAC));
+            $Connection->query($MySQLiQuerys->CreatePrograms($DataModel->MAC));
+        }
+        
+        return $Result;
+    }
+    public function DesktopPrograms($DataModel)
+    {
+        $DatabaseInformation = new DatabaseInformation;
+        $MySQLiQuerys = new MySQLiQuerys;
+        $Connection = $DatabaseInformation->DatabaseConnection();
+        $Result = $Connection->query($MySQLiQuerys->UploadProgram($DataModel)) or die('Error: ' . mysqli_error($Connection));
         return $Result;
     }
 }
@@ -87,9 +99,8 @@ class MySQLiQuerys{
 
         return $Result;
     }
-    public function EditPC($DataModel)
-    {
-        $Result = "UPDATE pc SET name='{$Country->name}' 
+    public function EditPC($DataModel){
+        $Result = "UPDATE pc SET 
         name='{$DataModel->Name}', 
         barcode='{$DataModel->Barcode}', 
         ipv4='{$DataModel->IPv4}', 
@@ -107,9 +118,24 @@ class MySQLiQuerys{
         locations='{$DataModel->Location}'
         WHERE mac='{$DataModel->MAC}';";
     }
-
+    public function DeletePC($var)
+    {
+        return $Result = "DELETE FROM pc WHERE mac='{$var}'";
+    }
     public function SelectPC($var){
         return $Result = "SELECT * FROM pc WHERE mac='{$var}';";
+    }
+    public function SelectPrograms($var){
+        return $Result = "SELECT 1 FROM {$var} LIMIT 1;";
+    }
+    public function DeletePrograms($var){
+        return $Result = "DROP TABLE {$var};";
+    }
+    public function CreatePrograms($var){
+        return $Result = "CREATE TABLE {$var} (id INT NOT NULL AUTO_INCREMENT , name VARCHAR(1024) NOT NULL , valid INT NOT NULL DEFAULT 1 , date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id));";
+    }
+    public function UploadProgram($DataModel){
+        return $Result = "INSERT INTO {$DataModel->MAC} (name) VALUES ('{$DataModel->Programs}');";
     }
 }
 

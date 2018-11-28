@@ -30,6 +30,11 @@ namespace HNP
         public List<String> GPU { get; set; }
         public List<String> Programs { get; set; }
     }
+    class ModelPrograms
+    {
+        public string Program { get; set; }
+        public string MAC { get; set; }
+    }
     class HNPLocations
     {
         public string Upload = "http://localhost/Hardware-network-and-programs-PHP-2018/php/desktopupload.php";
