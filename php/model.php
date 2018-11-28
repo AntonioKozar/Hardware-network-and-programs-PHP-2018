@@ -1,7 +1,6 @@
 <?php
 class DatabaseInformation{
-    public function DatabaseConnection()
-    {
+    public function DatabaseConnection(){
         $username = "root";
         $password = "";
         $database = "hnp2018";
@@ -13,7 +12,7 @@ class DatabaseInformation{
         return $Connection;
     }
 }
-
+# Data model for incoming information
 class DataModel{
     public $Name;
     public $Barcode;
@@ -36,6 +35,7 @@ class DataModel{
     public $Port;
     public $Programs;
 }
+# Data from desktop PC
 class DataUpload{
     public function DesktopPC($DataModel)
     {
@@ -47,14 +47,15 @@ class DataUpload{
             $Connection->query($MySQLiQuerys->DeletePC($DataModel->MAC));
             $Connection->query($MySQLiQuerys->UploadPC($DataModel));
         }
-        
-        
-        
+        if (!$Connection->query($MySQLiQuerys->UploadNetwork($DataModel))) {
+            $Connection->query($MySQLiQuerys->DeleteNetwork($DataModel->MAC));
+            $Connection->query($MySQLiQuerys->UploadNetwork($DataModel));
+        }
         if(!$Connection->query($MySQLiQuerys->CreatePrograms($DataModel->MAC))){
             $Connection->query($MySQLiQuerys->DeletePrograms($DataModel->MAC));
             $Connection->query($MySQLiQuerys->CreatePrograms($DataModel->MAC));
         }
-        
+        $Connection->query($MySQLiQuerys->UploadProcessor($DataModel->Processor));
         return $Result;
     }
     public function DesktopPrograms($DataModel)
@@ -66,18 +67,45 @@ class DataUpload{
         return $Result;
     }
 }
-
-
+# MySQLi querys
 class MySQLiQuerys{
     public $TableBodyHome = 'SELECT barcode, ipv4, mac, name, os FROM pc ORDER BY barcode;';
     public $TableBodyNetwork = 'SELECT ip, mac FROM network ORDER BY ip;';
+    public $TableBodyLocation = 'SELECT name, img FROM global_location;';
+    public $TableBodyProcessors = "SELECT DISTINCT processor FROM pc;";
+
+    public function UploadProcessor($var)
+    {
+        return $Result = "INSERT INTO processor (name) VALUES ('{$var}');";
+    }
+    public function UploadNetwork($DataModel){
+        $Result = "INSERT INTO network 
+        ( fd, port, ip, subnet, gateway, dns1, dns2, mac) VALUES 
+        ('{$DataModel->FD}', 
+        '{$DataModel->Port}', 
+        '{$DataModel->IPv4}', 
+        '{$DataModel->Subnet}', 
+        '{$DataModel->Gateway}', 
+        '{$DataModel->DNS1}', 
+        '{$DataModel->DNS2}', 
+        '{$DataModel->MAC}');";
+
+        return $Result;
+    }
+    public function DeleteNetwork($var){
+        return $Result = "DELETE FROM network WHERE mac='{$var}'";
+    }
+
+    public function TableBodyProcessorsCount($var){
+        return $Result = "SELECT COUNT(processor) FROM pc WHERE processor='{$var}';";
+    }
     public function DetailsPC($var){
         $Result = "SELECT * FROM pc WHERE mac='{$var}';";
         return $Result;
     } 
     public function UploadPC($DataModel){
         $Result = "INSERT INTO pc 
-        (name, barcode, mac, ipv4, subnet, gateway, dns1, dns2, processor, ram, motherboard, hddnumber, hddsize, gpu, os, locations, added_date, edited_date) VALUES 
+        (name, barcode, mac, ipv4, subnet, gateway, dns1, dns2, processor, ram, motherboard, hddnumber, hddsize, gpu, os, locations, added_date) VALUES 
         ('{$DataModel->Name}', 
         '{$DataModel->Barcode}', 
         '{$DataModel->MAC}', 
@@ -94,7 +122,6 @@ class MySQLiQuerys{
         '{$DataModel->GPU}', 
         '{$DataModel->OS}', 
         '{$DataModel->Location}', 
-        CURRENT_TIMESTAMP, 
         CURRENT_TIMESTAMP);";
 
         return $Result;
@@ -118,9 +145,8 @@ class MySQLiQuerys{
         locations='{$DataModel->Location}'
         WHERE mac='{$DataModel->MAC}';";
     }
-    public function DeletePC($var)
-    {
-        return $Result = "DELETE FROM pc WHERE mac='{$var}'";
+    public function DeletePC($var){
+        return $Result = "DELETE FROM pc WHERE mac='{$var}';";
     }
     public function SelectPC($var){
         return $Result = "SELECT * FROM pc WHERE mac='{$var}';";
@@ -132,10 +158,13 @@ class MySQLiQuerys{
         return $Result = "DROP TABLE {$var};";
     }
     public function CreatePrograms($var){
-        return $Result = "CREATE TABLE {$var} (id INT NOT NULL AUTO_INCREMENT , name VARCHAR(1024) NOT NULL , valid INT NOT NULL DEFAULT 1 , date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id));";
+        return $Result = "CREATE TABLE {$var} (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(1024) NOT NULL , valid INT(4) NOT NULL DEFAULT 1 , date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
     }
     public function UploadProgram($DataModel){
         return $Result = "INSERT INTO {$DataModel->MAC} (name) VALUES ('{$DataModel->Programs}');";
+    }
+    public function UploadLocations($var1, $var2){
+        return $Result = "INSERT INTO location (global,local) VALUES('{$var1}', '{$var2}');";
     }
 }
 
@@ -381,6 +410,49 @@ class Navbar{
         </div>';
         return $var;
     }
+    public function FooterNav(){
+        $var = '
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="1">  
+                    <button class="btn btn-outline-secondary" type="submit">Home</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                    <input type="hidden" name="Location" value="2">  
+                    <button class="btn btn-outline-secondary" type="submit">PC list</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="3">  
+                    <button class="btn btn-outline-secondary" type="submit">Network</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="4">  
+                    <button class="btn btn-outline-secondary" type="submit">Programs</button>
+                </form>
+                </li>
+                <li class="nav-item">
+                <form method="POST">
+                <input type="hidden" name="Location" value="5">  
+                    <button class="btn btn-outline-secondary" type="submit">Hardware</button>
+                </form>
+                </li>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0">
+                <input disabled class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button disabled class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>';
+        return $var;
+    }
+
     public function Detail(){
         $var = '
         <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -424,6 +496,124 @@ class Navbar{
         return $var;
     }
 }
+class FooterBar{
+    public function Navbar(){
+        $var = '
+        <div class="btn-group" role="group" aria-label="Basic example">
+        <form method="POST">
+          <input type="hidden" name="Location" value="6">  
+          <button class="btn btn-outline-secondary" type="submit">Locations</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="7">  
+          <button class="btn btn-outline-secondary" type="submit">Processor</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="8">  
+          <button class="btn btn-outline-secondary" type="submit">Users</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="9">  
+          <button class="btn btn-outline-secondary" type="submit">Manual input</button>
+        </form>
+        </div>
+        ';
+        return $var;
+    }
+    public function Locations(){
+        $var = '
+        <div class="btn-group" role="group" aria-label="Basic example">
+        <form method="POST">
+          <input type="hidden" name="Location" value="6">  
+          <button class="btn btn-secondary" type="submit">Locations</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="7">  
+          <button class="btn btn-outline-secondary" type="submit">Processor</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="8">  
+          <button class="btn btn-outline-secondary" type="submit">Users</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="9">  
+          <button class="btn btn-outline-secondary" type="submit">Manual input</button>
+        </form>
+        </div>
+        ';
+        return $var;
+    }
+    public function Processor(){
+        $var = '
+        <div class="btn-group" role="group" aria-label="Basic example">
+        <form method="POST">
+          <input type="hidden" name="Location" value="6">  
+          <button class="btn btn-outline-secondary" type="submit">Locations</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="7">  
+          <button class="btn btn-secondary" type="submit">Processor</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="8">  
+          <button class="btn btn-outline-secondary" type="submit">Users</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="9">  
+          <button class="btn btn-outline-secondary" type="submit">Manual input</button>
+        </form>
+        </div>
+        ';
+        return $var;
+    }
+    public function Users(){
+        $var = '
+        <div class="btn-group" role="group" aria-label="Basic example">
+        <form method="POST">
+          <input type="hidden" name="Location" value="6">  
+          <button class="btn btn-outline-secondary" type="submit">Locations</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="7">  
+          <button class="btn btn-outline-secondary" type="submit">Processor</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="8">  
+          <button class="btn btn-secondary" type="submit">Users</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="9">  
+          <button class="btn btn-outline-secondary" type="submit">Manual input</button>
+        </form>
+        </div>
+        ';
+        return $var;
+    }
+    public function ManualInput(){
+        $var = '
+        <div class="btn-group" role="group" aria-label="Basic example">
+        <form method="POST">
+          <input type="hidden" name="Location" value="6">  
+          <button class="btn btn-outline-secondary" type="submit">Locations</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="7">  
+          <button class="btn btn-outline-secondary" type="submit">Processor</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="8">  
+          <button class="btn btn-outline-secondary" type="submit">Users</button>
+        </form>
+        <form method="POST">
+          <input type="hidden" name="Location" value="9">  
+          <button class="btn btn-secondary" type="submit">Manual input</button>
+        </form>
+        </div>
+        ';
+        return $var;
+    }
+}
+
 class TableHeader{
     public function Home(){
         # Table header
@@ -475,6 +665,41 @@ class TableHeader{
         $var .= '</tr>';
         return $var;
     }
+    public function Locations(){
+        # Table header
+        $TH = array("Location", "Map");
+        $var = '<tr>';
+        foreach ($TH as $key) {
+            $var .= '<th scope="col">' . $key . '</th>';
+        }
+        $var .= '</tr>';
+        return $var;
+    }
+    public function Processors(){
+        # Table header
+        $TH = array("Name", "Count");
+
+        $var = '<tr>';
+        foreach ($TH as $key) {
+            $var .= '<th scope="col">' . $key . '</th>';
+        }
+        $var .= '</tr>';
+        return $var;
+    }
+    public function Users(){
+        # Table header
+        $TH = array("#", "Name", "Lastname", "Email", "Phone");
+        $var = '<tr>';
+        foreach ($TH as $key) {
+            $var .= '<th scope="col">' . $key . '</th>';
+        }
+        $var .= '</tr>';
+        return $var;
+    }
+    public function ManualInput()
+    {
+        # code...
+    }
 }
 class TableBody{
     public function Home(){
@@ -500,8 +725,7 @@ class TableBody{
         return $var;
 
     }
-    public function PCList()
-    {
+    public function PCList(){
         # code...
     }
     public function Network(){
@@ -523,11 +747,51 @@ class TableBody{
         }
         return $var;
     }
-    public function Programs()
+    public function Programs(){
+        # code...
+    }
+    public function Hardware(){
+        # code...
+    }
+    public function Locations(){
+        $DatabaseInformation = new DatabaseInformation;
+        $MySQLiQuerys = new MySQLiQuerys;
+        $var = "";
+        $Connection = $DatabaseInformation->DatabaseConnection();
+        $Result = $Connection->query($MySQLiQuerys->TableBodyLocation);
+        $Result = $Result->fetch_all(MYSQLI_ASSOC);
+        foreach ($Result as $Row) {
+            $var .= '<tr>';            
+            $var .= '<th>' . $Row['name'] . '</th>';
+            $var .= '<td><img src="data:image/jpeg;base64,' . base64_encode($Row['img']) . '"/></td>';
+            $var .= '</tr>';
+        }
+        return $var;
+    }
+    public function Processors(){
+        $DatabaseInformation = new DatabaseInformation;
+        $MySQLiQuerys = new MySQLiQuerys;
+        $var = "";
+        $Connection = $DatabaseInformation->DatabaseConnection();
+        $Result1 = $Connection->query($MySQLiQuerys->TableBodyProcessors);
+        $Result1 = $Result1->fetch_all(MYSQLI_ASSOC);
+        
+        foreach ($Result1 as $Row) {
+            $Result2 = $Connection->query($MySQLiQuerys->TableBodyProcessorsCount($Row['processor']));
+            
+            $var .= '<tr>';            
+            $var .= '<th>' . $Row['processor'] . '</th>';
+            $var .= '<td>' . $Result2->fetch_all(MYSQLI_NUM)[0][0] . '</td>';
+            $var .= '</tr>';
+               
+        }
+        return $var;
+    }
+    public function Users()
     {
         # code...
     }
-    public function Hardware()
+    public function ManualInput()
     {
         # code...
     }

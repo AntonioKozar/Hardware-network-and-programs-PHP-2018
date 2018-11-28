@@ -160,12 +160,13 @@ namespace HNP
             string Result = Value.ToString();
             return Result;
         }
-        public List<String> GPU()
+        public string GPU()
         {
-            List<String> Result = new List<String>();
+            string Result = "";
             foreach (ManagementObject Element in new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get())
             {
-                Result.Add(Element["Name"].ToString());
+                Result += Element["Name"].ToString();
+                Result += " - ";
             }
             return Result;
         }
@@ -185,6 +186,7 @@ namespace HNP
             Values.Add("DNS2", DataModel.DNS2);
             Values.Add("Processor", DataModel.Processor);
             Values.Add("RAM", DataModel.RAM);
+            Values.Add("GPU", DataModel.GPU);
             Values.Add("MOBO", DataModel.MOBO);
             Values.Add("HDDNumb", DataModel.HDDNumb);
             Values.Add("HDDSize", DataModel.HDDSize);

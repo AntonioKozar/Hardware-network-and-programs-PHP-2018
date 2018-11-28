@@ -56,24 +56,7 @@ $HTMLBodyInformation = ConstructorHome($HTMLBodyInformation->location, $HTMLBody
     <!-- Begin footer content -->
     <footer class="footer">
       <div class="container">
-      <div class="btn-group" role="group" aria-label="Basic example">
-        <form method="POST">
-          <input type="hidden" name="Location" value="6">  
-          <button class="btn btn-outline-secondary" type="submit">Locations</button>
-        </form>
-        <form method="POST">
-          <input type="hidden" name="Location" value="7">  
-          <button class="btn btn-outline-secondary" type="submit">Processor</button>
-        </form>
-        <form method="POST">
-          <input type="hidden" name="Location" value="8">  
-          <button class="btn btn-outline-secondary" type="submit">Users</button>
-        </form>
-        <form method="POST">
-          <input type="hidden" name="Location" value="9">  
-          <button class="btn btn-outline-secondary" type="submit">Manual input</button>
-        </form>
-        </div>
+      <?php print($HTMLBodyInformation->footernav);?>
       </div>
     </footer>
 

@@ -75,7 +75,7 @@ namespace HNP
                     }
                     else
                     {
-                        Console.WriteLine("\nResponse received was :\n{0}", Encoding.ASCII.GetString(responseArrayPrograms));
+                        //Console.WriteLine("\nResponse received was :\n{0}", Encoding.ASCII.GetString(responseArrayPrograms));
                     }
                     counter++;
                 }

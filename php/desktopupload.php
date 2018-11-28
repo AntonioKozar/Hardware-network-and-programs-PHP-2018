@@ -18,6 +18,7 @@ switch ($_POST['UploadType']) {
         $DataModel->DNS2 = $_POST['DNS2'];
         $DataModel->Processor = $_POST['Processor'];
         $DataModel->RAM = $_POST['RAM'];
+        $DataModel->GPU = $_POST['GPU'];
         $DataModel->MOBO = $_POST['MOBO'];
         $DataModel->HDDNumb = $_POST['HDDNumb'];
         $DataModel->HDDSize = $_POST['HDDSize'];

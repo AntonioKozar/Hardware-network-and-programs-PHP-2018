@@ -27,7 +27,7 @@ namespace HNP
         public string Location { get; set; }
         public string FD { get; set; }
         public string Port { get; set; }
-        public List<String> GPU { get; set; }
+        public string GPU { get; set; }
         public List<String> Programs { get; set; }
     }
     class ModelPrograms
@@ -37,6 +37,6 @@ namespace HNP
     }
     class HNPLocations
     {
-        public string Upload = "http://localhost/Hardware-network-and-programs-PHP-2018/php/desktopupload.php";
+        public string Upload = "http://161.53.202.63/Hardware-network-and-programs-PHP-2018/php/desktopupload.php";
     }
 }
