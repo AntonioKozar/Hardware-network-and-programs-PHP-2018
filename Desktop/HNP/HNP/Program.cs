@@ -68,15 +68,15 @@ namespace HNP
                 {
                     ProgramsModel.Program = key;
                     byte[] responseArrayPrograms = DataControler.SendDataPOSTPrograms(ProgramsModel);
-                    if(Encoding.ASCII.GetString(responseArrayPrograms) == "")
-                    {
+                    //if(Encoding.ASCII.GetString(responseArrayPrograms) == "")
+                    //{
                         progress.Report((double)counter / DataModel.Programs.Count);
                         Thread.Sleep(20);
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
                         //Console.WriteLine("\nResponse received was :\n{0}", Encoding.ASCII.GetString(responseArrayPrograms));
-                    }
+                    //}
                     counter++;
                 }
             }
