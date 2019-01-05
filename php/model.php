@@ -74,8 +74,7 @@ class MySQLiQuerys{
     public $TableBodyLocation = 'SELECT name, img FROM global_location;';
     public $TableBodyProcessors = "SELECT DISTINCT processor FROM pc;";
 
-    public function UploadProcessor($var)
-    {
+    public function UploadProcessor($var){
         return $Result = "INSERT INTO processor (name) VALUES ('{$var}');";
     }
     public function UploadNetwork($DataModel){
