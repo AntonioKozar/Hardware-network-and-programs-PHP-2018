@@ -1,5 +1,5 @@
 <?php
-header("Location: index.php")
+header("Location: index.php");
 /*
 include('model.php');
 include('controler.php');

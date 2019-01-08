@@ -39,11 +39,9 @@ switch ($_POST['UploadType']) {
         $DataModel->MAC = $_POST['MAC'];
         $Result = $DataUpload->DesktopPrograms($DataModel);
         break;
-    case '3':
-        # code...
-        break;
     default:
         # code...
+        header("Location: index.php");
         break;
 }
 ?>
